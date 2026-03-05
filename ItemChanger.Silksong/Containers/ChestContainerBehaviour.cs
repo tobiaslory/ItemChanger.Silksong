@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Reflection;
 using HutongGames.PlayMaker;
 using ItemChanger.Containers;
 using ItemChanger.Enums;
@@ -22,7 +21,6 @@ namespace ItemChanger.Silksong.Containers
         ];
         private static readonly string[] AttackNameTokens = ["attack", "slash", "weapon", "nail", "hit", "sword", "cut"];
 
-        private const string PersistentValueFieldName = "Value";
         private const string ActivationTriggerObjectName = "IC Chest Activation Trigger";
 
         public ContainerInfo? Info { get; private set; }
@@ -351,31 +349,20 @@ namespace ItemChanger.Silksong.Containers
             try
             {
                 persistentBoolItem = GetComponent<PersistentBoolItem>() ?? gameObject.AddComponent<PersistentBoolItem>();
-                BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                Type? dataType = typeof(PersistentBoolItem).GetNestedType("PersistentBoolData", flags);
-                if (dataType == null)
+                PersistentItemData<bool>? data = persistentBoolItem.ItemData;
+                if (data == null)
                 {
+                    Logger().LogWarn("[Chest] PersistentBoolItem.ItemData was null.");
                     persistentBoolInitialized = true;
                     return;
                 }
 
-                FieldInfo? itemDataField = typeof(PersistentBoolItem).GetField("itemData", flags);
-                object data = itemDataField?.GetValue(persistentBoolItem) ?? Activator.CreateInstance(dataType);
-                bool existingValue = (bool)(dataType.GetField(PersistentValueFieldName, flags)?.GetValue(data) ?? false);
-                bool initialValue = existingValue || Info.GiveInfo.Placement.CheckVisitedAny(VisitState.Opened);
-
-                dataType.GetField("ID", flags)?.SetValue(data, GetPersistentId());
-                dataType.GetField("SceneName", flags)?.SetValue(data, ResolveSceneName());
-                dataType.GetField("IsSemiPersistent", flags)?.SetValue(data, false);
-                dataType.GetField(PersistentValueFieldName, flags)?.SetValue(data, initialValue);
-                FieldInfo? mutatorField = dataType.GetField("Mutator", flags);
-                if (mutatorField != null)
-                {
-                    object mutatorValue = Enum.ToObject(mutatorField.FieldType, 0);
-                    mutatorField.SetValue(data, mutatorValue);
-                }
-
-                itemDataField?.SetValue(persistentBoolItem, data);
+                bool initialValue = data.Value || Info.GiveInfo.Placement.CheckVisitedAny(VisitState.Opened);
+                data.ID = GetPersistentId();
+                data.SceneName = ResolveSceneName();
+                data.IsSemiPersistent = false;
+                data.Mutator = SceneData.PersistentMutatorTypes.None;
+                data.Value = initialValue;
             }
             catch (Exception e)
             {
@@ -396,16 +383,13 @@ namespace ItemChanger.Silksong.Containers
 
             try
             {
-                BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                Type? dataType = typeof(PersistentBoolItem).GetNestedType("PersistentBoolData", flags);
-                FieldInfo? itemDataField = typeof(PersistentBoolItem).GetField("itemData", flags);
-                object? data = itemDataField?.GetValue(persistentBoolItem);
-                if (dataType == null || data == null)
+                PersistentItemData<bool>? data = persistentBoolItem.ItemData;
+                if (data == null)
                 {
                     return false;
                 }
 
-                return (bool)(dataType.GetField(PersistentValueFieldName, flags)?.GetValue(data) ?? false);
+                return data.Value;
             }
             catch
             {
@@ -422,16 +406,13 @@ namespace ItemChanger.Silksong.Containers
 
             try
             {
-                BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                Type? dataType = typeof(PersistentBoolItem).GetNestedType("PersistentBoolData", flags);
-                FieldInfo? itemDataField = typeof(PersistentBoolItem).GetField("itemData", flags);
-                object? data = itemDataField?.GetValue(persistentBoolItem);
-                if (dataType == null || data == null)
+                PersistentItemData<bool>? data = persistentBoolItem.ItemData;
+                if (data == null)
                 {
                     return;
                 }
 
-                dataType.GetField(PersistentValueFieldName, flags)?.SetValue(data, value);
+                data.Value = value;
             }
             catch (Exception e)
             {
