@@ -23,15 +23,14 @@ public record CompositeString : IValueProvider<string>
     /// Creates a <see cref="CompositeString"/> which substitutes for {0}, {1}, etc in <paramref name="format"/> according to index in the <paramref name="args"/> sequence.
     /// </summary>
     public static CompositeString Create(IValueProvider<string> format, params IEnumerable<IValueProvider<object>> args) 
-        => Create(format, args.Select((val, i) => (i.ToString(), val)));
+        => Create(format, args.Select((val, i) => (i.ToString(), val)).ToDictionary(p => p.Item1, p => p.Item2));
 
     /// <summary>
-    /// Creates a <see cref="CompositeString"/> which substitutes {key} by value in <paramref name="pattern"/>, for each element of the <paramref name="args"/> sequence.
-    /// Keys in the <paramref name="args"/> sequence must be unique.
+    /// Creates a <see cref="CompositeString"/> which substitutes {key} by value in <paramref name="pattern"/>, for each element of <paramref name="argLookup"/>.
     /// </summary>
-    public static CompositeString Create(IValueProvider<string> pattern, params IEnumerable<(string key, IValueProvider<object> value)> args)
+    public static CompositeString Create(IValueProvider<string> pattern, Dictionary<string, IValueProvider<object>> argLookup)
     {
-        return new() { Pattern = pattern, Params = new(args.ToDictionary(a => a.key, a => a.value)), };
+        return new() { Pattern = pattern, Params = new(new Dictionary<string, IValueProvider<object>>(argLookup)), };
     }
 
     [JsonIgnore]

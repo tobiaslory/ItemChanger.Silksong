@@ -27,7 +27,7 @@
     <PackageId>ItemChanger.Silksong</PackageId>
     <RepositoryUrl>https://github.com/homothetyhk/ItemChanger.Silksong</RepositoryUrl>
     <ThunderstoreAuthor>homothety</ThunderstoreAuthor>
-    <NeutralLanguage>EN</NeutralLanguage>
+    <NeutralLanguage>DEFAULT</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
