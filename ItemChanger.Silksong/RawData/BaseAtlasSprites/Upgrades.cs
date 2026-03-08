@@ -4,24 +4,24 @@ namespace ItemChanger.Silksong.RawData;
 
 internal static partial class BaseAtlasSprites
 {
-
-    //melodies
-    public static AtlasSprite Architect_s_Melody = new AtlasSprite()
+    //mask shards
+    public static AtlasSprite Mask_Shard => new()
     {
         BundleName = "atlases_assets_assets/sprites/_atlases/inventory.spriteatlas",
-        SpriteName = "QI_Main__0001_architect"
+        SpriteName = "Hornet_Spool_Upgrade_Shop_Icon_Heart"
     };
 
-    public static AtlasSprite Conductor_s_Melody = new AtlasSprite()
+    //silk heart
+    public static AtlasSprite Silk_Heart => new()
     {
         BundleName = "atlases_assets_assets/sprites/_atlases/inventory.spriteatlas",
-        SpriteName = "QI_Main__0000_conductor"
+        SpriteName = "silk_heart_inv_icon"
     };
 
-    public static AtlasSprite Vaultkeeper_s_Melody = new AtlasSprite()
+    //spool fragment
+    public static AtlasSprite Spool_Fragment => new()
     {
         BundleName = "atlases_assets_assets/sprites/_atlases/inventory.spriteatlas",
-        SpriteName = "QI_Main__0002_librarian"
+        SpriteName = "Hornet_Spool_Upgrade_Shop_Icon"
     };
-
 }

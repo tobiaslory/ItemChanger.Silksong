@@ -6,6 +6,8 @@ using ItemChanger.Silksong.UIDefs;
 
 namespace ItemChanger.Silksong.RawData;
 
+// This is a partial class containing a large number of Item properties. The properties are arranged in the files in the BaseItemList folder.
+
 internal static partial class BaseItemList
 {
     public static Item Flea => new FleaItem

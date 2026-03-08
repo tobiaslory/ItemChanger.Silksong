@@ -2,6 +2,8 @@
 
 namespace ItemChanger.Silksong.RawData;
 
+// This is a partial class containing a large number of AtlasSprite properties. The properties are arranged in the files in the BaseAtlasSprites folder.
+
 internal static partial class BaseAtlasSprites
 {
 
@@ -11,5 +13,5 @@ internal static partial class BaseAtlasSprites
         SpriteName = "Flea_Scoreboard_Icons_0004_Hornet"
     };
 
-
+    public static List<AtlasSprite> GetBaseAtlasSprites() => [.. typeof(BaseAtlasSprites).GetProperties().Select(p => (AtlasSprite)p.GetValue(null)!)];
 }

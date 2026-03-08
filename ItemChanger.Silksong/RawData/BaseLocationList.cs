@@ -7,6 +7,8 @@ using ItemChanger.Tags;
 
 namespace ItemChanger.Silksong.RawData
 {
+    // This is a partial class containing a large number of Location properties. The properties are arranged in the files in the BaseLocationList folder.
+
     internal static partial class BaseLocationList
     {
         public static Location Start => new StartLocation
