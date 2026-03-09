@@ -5,9 +5,12 @@ using ItemChanger.Containers;
 using ItemChanger.Events;
 using ItemChanger.Logging;
 using ItemChanger.Modules;
+using ItemChanger.Silksong.Extensions;
 using ItemChanger.Silksong.Modules;
+using ItemChanger.Silksong.Serialization;
 using ItemChanger.Silksong.StartDefs;
 using ItemChanger.Silksong.Util;
+using TeamCherry.Localization;
 using TeamCherry.SharedUtils;
 
 namespace ItemChanger.Silksong
@@ -77,6 +80,26 @@ namespace ItemChanger.Silksong
 
         private readonly Dictionary<FsmId, Action<PlayMakerFSM>?> fsmEdits = [];
 
+        public void AddLanguageEdit(LanguageString id, Func<string, string> edit)
+        {
+            if (!languageEdits.TryGetValue(id, out List<Func<string, string>> list))
+            {
+                languageEdits.Add(id, list = []);
+            }
+            list.Add(edit);
+        }
+
+        public void RemoveLanguageEdit(LanguageString id, Func<string, string> edit)
+        {
+            if (languageEdits.TryGetValue(id, out List<Func<string, string>> list))
+            {
+                list.Remove(edit);
+                if (list.Count == 0) languageEdits.Remove(id);
+            }
+        }
+
+        private readonly Dictionary<LanguageString, List<Func<string, string>>> languageEdits = [];
+
         protected override void PrepareEvents(LifecycleEvents.Invoker lifecycleInvoker, GameEvents.Invoker gameInvoker)
         {
             this.lifecycleInvoker = lifecycleInvoker;
@@ -111,6 +134,11 @@ namespace ItemChanger.Silksong
                 return;
             }
 
+            if (from.name == SceneNames.Menu_Title)
+            {
+                GameManager.instance.DoNextFrame(() => lifecycleInvoker?.NotifyOnSafeToGiveItems());
+            }
+
             gameInvoker?.NotifyPersistentUpdate(); // TODO: move to execute before IC.Core
         }
 
@@ -142,7 +170,6 @@ namespace ItemChanger.Silksong
                 }
 
                 Host.lifecycleInvoker?.NotifyAfterStartNewGame();
-                Host.lifecycleInvoker?.NotifyOnSafeToGiveItems(); // TODO: move
                 return false;
             }
 
@@ -160,7 +187,6 @@ namespace ItemChanger.Silksong
             private static void AfterContinueGame()
             {
                 Host.lifecycleInvoker?.NotifyAfterContinueGame();
-                Host.lifecycleInvoker?.NotifyOnSafeToGiveItems(); // TODO: move
             }
 
             [HarmonyPrefix]
@@ -205,6 +231,26 @@ namespace ItemChanger.Silksong
                 catch (Exception err)
                 {
                     Instance.Logger.LogError($"Error applying FSM edit to FSM {fsmName} in object {objectName} in scene {sceneName}: {err}");
+                }
+            }
+
+            [HarmonyPatch(typeof(Language), nameof(Language.Get), [typeof(string), typeof(string)])]
+            private static void Postfix(string key, string sheetTitle, ref string __result)
+            {
+                LanguageString id = new(sheetTitle, key);
+                if (Host.languageEdits.TryGetValue(id, out List<Func<string, string>> list))
+                {
+                    foreach (Func<string, string > f in list)
+                    {
+                        try
+                        {
+                            __result = f(__result);
+                        }
+                        catch (Exception e)
+                        {
+                            Host.Logger.LogError($"Error performing language edit on key {key} in sheet {sheetTitle}:\n{e}");
+                        }
+                    }
                 }
             }
         }

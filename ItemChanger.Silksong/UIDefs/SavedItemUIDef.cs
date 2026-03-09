@@ -1,4 +1,4 @@
-﻿using ItemChanger.Enums;
+using ItemChanger.Enums;
 using ItemChanger.Silksong.Serialization;
 using ItemChanger.Silksong.Util;
 using UnityEngine;
@@ -28,7 +28,7 @@ namespace ItemChanger.Silksong.UIDefs
         {
             if (type.HasFlag(MessageType.SmallPopup))
             {
-                MessageUtil.EnqueueMessage(Item.GetCollectionName(), Item.GetCollectionSprite());
+                MessageUtil.EnqueueMessage(GetPostviewName(), GetSprite());
             }
             callback?.Invoke();
         }

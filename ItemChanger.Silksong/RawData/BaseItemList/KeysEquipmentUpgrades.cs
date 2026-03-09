@@ -15,6 +15,7 @@ internal static partial class BaseItemList
     public static Item Silk_Heart => new PDIntItem { Name = ItemNames.Silk_Heart, IntName = nameof(PlayerData.silkRegenMax), Amount = 1, Increment = true, UIDef = null! };
     public static Item Mask_Shard => new MaskShardItem { Name = ItemNames.Mask_Shard, Shards = 1, UIDef = null! };
     public static Item Spool_Fragment => new SpoolFragmentItem { Name = ItemNames.Spool_Fragment, Fragments = 1, UIDef = null! };
+    public static Item Hunter_s_Journal => new PDBoolItem { Name = ItemNames.Hunter_s_Journal, BoolName = nameof(PlayerData.hasJournal), };
     public static Item Crafting_Kit => ItemChangerSavedItem.Create(//refers to same internal item as tool pouch
         name: ItemNames.Crafting_Kit,
         id: "Tool Pouch&Kit Inv",
