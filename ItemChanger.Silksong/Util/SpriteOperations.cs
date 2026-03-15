@@ -53,7 +53,8 @@ internal static class SpriteOperations
 
         return Sprite.Create(combinedTex, new Rect(0, 0, canvasW, canvasH), new Vector2(0.5f, 0.5f));
     }
-
+    
+    // Draw the entire rect around a given sprite. In certain cases this may be preferable to drawing the Mesh.
     private static void DrawSpriteRect(Sprite sprite, Rect destRect)
     {
         Rect sourceRect = sprite.textureRect;
