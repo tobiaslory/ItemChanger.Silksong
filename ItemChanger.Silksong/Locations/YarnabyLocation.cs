@@ -1,16 +1,15 @@
-using ItemChanger.Locations;
-using ItemChanger.Silksong.Extensions;
-using Silksong.FsmUtil;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
+using ItemChanger.Locations;
 using Newtonsoft.Json;
+using Silksong.FsmUtil;
 
 namespace ItemChanger.Silksong.Locations;
 
 public class YarnabyLocation : AutoLocation
 {
     [JsonIgnore]
-    private FsmEditGroup? fsmEdits;    
+    private FsmEditGroup? fsmEdits; 
 
     protected override void DoLoad()
     {
@@ -67,6 +66,6 @@ public class YarnabyLocation : AutoLocation
         crestChangeState.RemoveFirstActionOfType<UnlockCrest>();
         crestChangeState.RemoveFirstActionOfType<AutoEquipCrestV2>();
         crestChangeState.RemoveActionsOfType<CallMethodProper>();
-        crestChangeState.InsertMethod(0, GiveAll);
+        crestChangeState.InsertLambdaMethod(0, GiveAll);
     }
 }

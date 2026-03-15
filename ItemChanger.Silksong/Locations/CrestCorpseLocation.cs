@@ -43,7 +43,7 @@ public class CrestCorpseLocation : AutoLocation
         crestChangeState.RemoveActionsOfType<UnlockCrest>();
         crestChangeState.RemoveActionsOfType<AutoEquipCrestV2>();
         crestChangeState.RemoveActionsOfType<ToolsActiveStateControlV2>();
-        crestChangeState.InsertMethod(0, GiveAll);
+        crestChangeState.InsertLambdaMethod(0, GiveAll);
 
         FsmState crestMsgState = fsm.MustGetState("Crest Msg");
         crestMsgState.RemoveActionsOfType<ShowToolCrestUIMsg>();
