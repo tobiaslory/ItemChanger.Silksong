@@ -2,11 +2,14 @@
 
 namespace ItemChanger.Silksong.Assets;
 
-[JsonData("$.*~", "**/Assets/scenegameobjects.json")]
-public static partial class SceneGameObjectKeys { }
+/// <summary>
+/// Keys for game object assets (scene and non-scene).
+/// </summary>
+[JsonData("$.*~", "**/Assets/*gameobjects.json")]
+public static partial class GameObjectKeys { }
 
-[JsonData("$.*~", "**/Assets/nonscenegameobjects.json")]
-public static partial class NonSceneGameObjectKeys { }
-
+/// <summary>
+/// Keys for sprite assets.
+/// </summary>
 [JsonData("$.*~", "**/Assets/sprites.json")]
 public static partial class SpriteKeys { }
