@@ -1,5 +1,4 @@
-﻿using Benchwarp.Util;
-using ItemChanger.Silksong.Util;
+﻿using ItemChanger.Silksong.Util;
 using Silksong.AssetHelper.ManagedAssets;
 
 namespace ItemChanger.Silksong.Assets;
