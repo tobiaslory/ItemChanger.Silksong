@@ -7,6 +7,11 @@ internal class GenericObjectCache<T> : IObjectCache<T>
 {
     private Dictionary<string, ManagedAsset<T>> _assets = [];
 
+    private GenericObjectCache(Dictionary<string, ManagedAsset<T>> assets)
+    {
+        _assets = assets;
+    }
+
     public T GetAsset(string key)
     {
         ManagedAsset<T> asset = _assets.TryGetValue(key, out ManagedAsset<T> fromDict)
@@ -19,7 +24,7 @@ internal class GenericObjectCache<T> : IObjectCache<T>
 
     public static GenericObjectCache<T> FromEmbeddedResource(string resourceName)
     {
-        GenericObjectCache<T> cache = new();
+        Dictionary<string, ManagedAsset<T>> assets = [];
 
         if (!JsonUtils.TryDeserializeEmbeddedResource(
             resourceName,
@@ -30,10 +35,10 @@ internal class GenericObjectCache<T> : IObjectCache<T>
 
         foreach ((string key, ManagedAssetGroup<T>.NonSceneAssetInfo info) in nonSceneAssetData)
         {
-            cache._assets[key] = ManagedAsset<T>.FromNonSceneAsset(assetName: info.AssetName, bundleName: info.BundleName);
+            assets[key] = ManagedAsset<T>.FromNonSceneAsset(assetName: info.AssetName, bundleName: info.BundleName);
         }
 
-        return cache;
+        return new(assets);
     }
 
     public void Load()
