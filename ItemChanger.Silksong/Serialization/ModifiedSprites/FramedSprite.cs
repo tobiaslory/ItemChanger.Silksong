@@ -1,5 +1,4 @@
-﻿using ItemChanger.Serialization;
-using ItemChanger.Silksong.Assets;
+﻿using ItemChanger.Silksong.Assets;
 using ItemChanger.Silksong.RawData;
 using ItemChanger.Silksong.Util;
 using UnityEngine;
