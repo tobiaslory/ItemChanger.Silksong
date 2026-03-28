@@ -24,14 +24,11 @@ public static class LoreTabletContainer
     /// </returns>
     public static GameObject InstantiateWeaverTablet(Scene scene, Func<string> messageProvider)
     {
-        string inspectRegionName = "Inspect Region (1)";
-        GameObject tabletPrefab = AssetCache.GetAsset<IList<GameObject>>(GameObjectListKeys.LORE_TABLET_WEAVER)
-            .First(obj => obj.FindChild(inspectRegionName) != null);
-        GameObject tablet = scene.Instantiate(tabletPrefab);
+        GameObject tablet = GameObjectKeys.LORE_TABLET_WEAVER.InstantiateAsset(scene);
         
         string modKey = "IC_WEAVER_TABLET";
         LocalisedString s = new(Localization.Sheet, modKey);
-        BasicNPC npc = tablet.FindChild(inspectRegionName)!.GetComponent<BasicNPC>();
+        BasicNPC npc = tablet.FindChild("Inspect Region (1)")!.GetComponent<BasicNPC>();
         npc.StartingDialogue += () =>
         {
             Language._currentEntrySheets[Localization.Sheet][modKey] = messageProvider();
