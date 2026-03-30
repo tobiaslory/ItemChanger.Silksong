@@ -396,14 +396,20 @@ public static class LocationNames
     public const string Rosary_Rock__Shellwood_26 = "Rosary_Rock-Shellwood_26";
 
     // Rosary Chests
+    public const string Rosary_Chest__Ant_21 = "Rosary_Chest-Ant_21";
     public const string Rosary_Chest__Bone_19 = "Rosary_Chest-Bone_19";
     public const string Rosary_Chest__Bone_East_17 = "Rosary_Chest-Bone_East_17";
+    public const string Rosary_Chest__Bone_East_18 = "Rosary_Chest-Bone_East_18";
     public const string Rosary_Chest__Dust_05 = "Rosary_Chest-Dust_05";
     public const string Rosary_Chest__Hang_06_Bank = "Rosary_Chest-Hang_06_Bank";
+    public const string Rosary_Chest__Hang_06_Bank_1 = "Rosary_Chest-Hang_06_Bank_1";
+    public const string Rosary_Chest__Hang_06_Bank_2 = "Rosary_Chest-Hang_06_Bank_2";
+    public const string Rosary_Chest__Hang_06_Bank_3 = "Rosary_Chest-Hang_06_Bank_3";
     public const string Rosary_Chest__Hang_08 = "Rosary_Chest-Hang_08";
     public const string Rosary_Chest__Slab_19b = "Rosary_Chest-Slab_19b";
     public const string Rosary_Chest__Song_03 = "Rosary_Chest-Song_03";
     public const string Rosary_Chest__Song_17 = "Rosary_Chest-Song_17";
+    public const string Rosary_Chest__Song_24 = "Rosary_Chest-Song_24";
     public const string Rosary_Chest__Tut_01 = "Rosary_Chest-Tut_01";
 
     // Rosary Caches (Hidden/Large Stashes)

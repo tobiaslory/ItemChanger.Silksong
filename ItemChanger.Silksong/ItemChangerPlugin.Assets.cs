@@ -17,10 +17,16 @@ namespace ItemChanger.Silksong
             AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest");
             AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (1)");
             AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (2)");
-            AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest");
-            AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (1)");
-            AssetRequestAPI.RequestSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (2)");
             AssetRequestAPI.RequestSceneAsset(SceneNames.Tut_01, "Bone Chest");
+            AssetRequestAPI.RequestSceneAsset("bone_east_17", "Ant Chest");
+            AssetRequestAPI.RequestSceneAsset("ant_21", "Ant Chest");
+            AssetRequestAPI.RequestSceneAsset("slab_19b", "City Shard Chest");
+            AssetRequestAPI.RequestSceneAsset("dock_03", "City Shard Chest");
+            AssetRequestAPI.RequestSceneAsset("dust_05", "Pilgrim Chest");
+            AssetRequestAPI.RequestSceneAsset("hang_08", "Chest Scene/Chest");
+            AssetRequestAPI.RequestSceneAsset("song_03", "Chest Scene/Chest");
+            AssetRequestAPI.RequestSceneAsset("song_24", "Black Thread States/Normal World/Enemy Control/Song Fencer/Chest");
+            AssetRequestAPI.RequestSceneAsset("dock_06_church", "Black Thread States Thread Only Variant/Normal World/City Shard Chest");
             AssetRequestAPI.RequestNonSceneAsset<QuestTargetPlayerDataBools>(
                 bundleName: "dataassets_assets_assets/dataassets/questsystem/proxies.bundle",
                 assetName: "Assets/Data Assets/Quest System/Proxies/FleasCollected Target.asset"

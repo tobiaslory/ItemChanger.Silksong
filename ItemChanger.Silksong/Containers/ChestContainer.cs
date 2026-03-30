@@ -4,29 +4,75 @@ using HutongGames.PlayMaker.Actions;
 using ItemChanger.Containers;
 using ItemChanger.Enums;
 using ItemChanger.Items;
+using ItemChanger.Placements;
 using ItemChanger.Silksong.Extensions;
+using ItemChanger.Silksong.Tags;
 using Silksong.AssetHelper.ManagedAssets;
 using Silksong.FsmUtil;
 using UnityEngine;
 
 namespace ItemChanger.Silksong.Containers;
 
+public enum ChestType
+{
+    Bone,
+    Ant,
+    CityShard,
+    Pilgrim,
+    Bank,
+    ChestScene,
+    SongFencer,
+    ThreadCityShard,
+}
+
 public class ChestContainer : Container
 {
-    // TODO: create enum of chest types. Use in ChestPrefabData and possibly split fsm edit depending on chest type if needed.
+    private const string AntChestObjectName = "Ant Chest";
+    private const string CityShardChestObjectName = "City Shard Chest";
+    private const string ChestSceneObjectName = "Chest Scene/Chest";
 
     private sealed record ChestPrefabData(string SceneName, string ObjectName, ManagedAsset<GameObject> Prefab);
 
-    private static readonly ChestPrefabData[] PrefabCandidates =
-    [
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest")),
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (1)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (1)")),
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (2)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (2)")),
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest")),
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (1)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (1)")),
-        new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (2)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Here/Chest (2)")),
-        new(SceneNames.Tut_01, "Bone Chest", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Tut_01, "Bone Chest")),
-    ];
+    private static readonly Dictionary<ChestType, ChestPrefabData[]> _prefabs = new()
+    {
+        [ChestType.Bone] =
+        [
+            new(SceneNames.Tut_01, "Bone Chest", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Tut_01, "Bone Chest")),
+        ],
+        [ChestType.Ant] =
+        [
+            new("bone_east_17", AntChestObjectName, ManagedAsset<GameObject>.FromSceneAsset("bone_east_17", AntChestObjectName)),
+            new("ant_21", AntChestObjectName, ManagedAsset<GameObject>.FromSceneAsset("ant_21", AntChestObjectName)),
+        ],
+        [ChestType.CityShard] =
+        [
+            new("slab_19b", CityShardChestObjectName, ManagedAsset<GameObject>.FromSceneAsset("slab_19b", CityShardChestObjectName)),
+            new("dock_03", CityShardChestObjectName, ManagedAsset<GameObject>.FromSceneAsset("dock_03", CityShardChestObjectName)),
+        ],
+        [ChestType.Pilgrim] =
+        [
+            new("dust_05", "Pilgrim Chest", ManagedAsset<GameObject>.FromSceneAsset("dust_05", "Pilgrim Chest")),
+        ],
+        [ChestType.Bank] =
+        [
+            new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest")),
+            new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (1)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (1)")),
+            new(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (2)", ManagedAsset<GameObject>.FromSceneAsset(SceneNames.Hang_06_bank, "Thief Scene Control/Thieves Not Here/Chest (2)")),
+        ],
+        [ChestType.ChestScene] =
+        [
+            new("song_03", ChestSceneObjectName, ManagedAsset<GameObject>.FromSceneAsset("song_03", ChestSceneObjectName)),
+            new("hang_08", ChestSceneObjectName, ManagedAsset<GameObject>.FromSceneAsset("hang_08", ChestSceneObjectName)),
+        ],
+        [ChestType.SongFencer] =
+        [
+            new("song_24", "Black Thread States/Normal World/Enemy Control/Song Fencer/Chest", ManagedAsset<GameObject>.FromSceneAsset("song_24", "Black Thread States/Normal World/Enemy Control/Song Fencer/Chest")),
+        ],
+        [ChestType.ThreadCityShard] =
+        [
+            new("dock_06_church", "Black Thread States Thread Only Variant/Normal World/City Shard Chest", ManagedAsset<GameObject>.FromSceneAsset("dock_06_church", "Black Thread States Thread Only Variant/Normal World/City Shard Chest")),
+        ],
+    };
 
     public static ChestContainer Instance { get; } = new();
 
@@ -40,7 +86,8 @@ public class ChestContainer : Container
 
     public override GameObject GetNewContainer(ContainerInfo info)
     {
-        ChestPrefabData source = ResolveChestPrefabOrThrow();
+        ChestType chestType = SelectContainerType(info);
+        ChestPrefabData source = ResolveChestPrefabOrThrow(chestType);
         source.Prefab.EnsureLoaded();
         GameObject chest = source.Prefab.InstantiateInScene(info.ContainingScene);
         chest.name = info.GetGameObjectName("IC Chest");
@@ -48,16 +95,16 @@ public class ChestContainer : Container
         return chest;
     }
 
-    public override void ModifyContainerInPlace(GameObject chest, ContainerInfo info)
+    public override void ModifyContainerInPlace(GameObject obj, ContainerInfo info)
     {
-        RemoveExistingItems(chest);
-        RemovePersistentData(chest);
-        AddGiveEffectToChestControlFsm(chest.LocateMyFSM("Chest Control"), info);
+        RemoveExistingItems(obj);
+        RemovePersistentData(obj);
+        AddGiveEffectToChestControlFsm(obj.LocateMyFSM("Chest Control"), info);
     }
 
     protected override void DoLoad()
     {
-        foreach (ChestPrefabData source in PrefabCandidates)
+        foreach (ChestPrefabData source in _prefabs.Values.SelectMany(static x => x))
         {
             source.Prefab.Load();
         }
@@ -65,17 +112,37 @@ public class ChestContainer : Container
 
     protected override void DoUnload()
     {
-        foreach (ChestPrefabData source in PrefabCandidates)
+        foreach (ChestPrefabData source in _prefabs.Values.SelectMany(static x => x))
         {
             source.Prefab.Unload();
         }
     }
 
-    private static ChestPrefabData ResolveChestPrefabOrThrow()
+    private static ChestType SelectContainerType(ContainerInfo info)
     {
-        for (int i = 0; i < PrefabCandidates.Length; i++)
+        if (info.GiveInfo.Placement is IPrimaryLocationPlacement pmt
+            && pmt.Location.GetTag<OriginalChestTypeTag>() is OriginalChestTypeTag originalType)
         {
-            ChestPrefabData source = PrefabCandidates[i];
+            return originalType.ChestType;
+        }
+
+        foreach (Item item in info.GiveInfo.Items)
+        {
+            if (item.GetTag<ItemChestTypeTag>() is ItemChestTypeTag tag)
+            {
+                return tag.ChestType;
+            }
+        }
+
+        return ChestType.Bone;
+    }
+
+    private static ChestPrefabData ResolveChestPrefabOrThrow(ChestType chestType)
+    {
+        ChestPrefabData[] candidates = _prefabs[chestType];
+        for (int i = 0; i < candidates.Length; i++)
+        {
+            ChestPrefabData source = candidates[i];
             try
             {
                 source.Prefab.EnsureLoaded();
@@ -86,12 +153,12 @@ public class ChestContainer : Container
             }
             catch (Exception e)
             {
-                ItemChangerHost.Singleton.Logger.LogWarn($"[Chest] Failed prefab candidate {source.SceneName}/{source.ObjectName}: {e.GetType().Name}");
+                ItemChangerHost.Singleton.Logger.LogWarn($"[Chest] Failed prefab candidate {source.SceneName}/{source.ObjectName} for {chestType}: {e.GetType().Name}");
             }
         }
 
-        string candidates = string.Join(", ", PrefabCandidates.Select(x => $"{x.SceneName}/{x.ObjectName}"));
-        string message = $"[Chest] Failed to resolve chest prefab from candidates: {candidates}";
+        string candidateSummary = string.Join(", ", candidates.Select(x => $"{x.SceneName}/{x.ObjectName}"));
+        string message = $"[Chest] Failed to resolve chest prefab for {chestType} from candidates: {candidateSummary}";
         ItemChangerHost.Singleton.Logger.LogError(message);
         throw new InvalidOperationException(message);
     }
@@ -140,24 +207,21 @@ public class ChestContainer : Container
             };
 
             info.GiveInfo.Placement.AddVisitFlag(VisitState.Opened);
-            foreach (Item item in info.GiveInfo.Items)
+            foreach (Item item in info.GiveInfo.Items.Where(item => !item.IsObtained()))
             {
-                if (!item.IsObtained())
+                if (item.GiveEarly(ContainerNames.Chest))
                 {
-                    if (item.GiveEarly(ContainerNames.Chest))
-                    {
-                        item.Give(info.GiveInfo.Placement, gi);
-                    }
-                    else SpawnShiny(item, fling: info.GiveInfo.FlingType == FlingType.Everywhere);
+                    item.Give(info.GiveInfo.Placement, gi);
                 }
+                else SpawnShiny(item, fling: info.GiveInfo.FlingType == FlingType.Everywhere);
             }
         }
 
         void OnActivateChest()
         {
-            foreach (Item item in info.GiveInfo.Items)
+            foreach (Item item in info.GiveInfo.Items.Where(item => !item.IsObtained()))
             {
-                if (!item.IsObtained()) SpawnShiny(item, fling: false);
+                SpawnShiny(item, fling: false);
             }
         }
 
